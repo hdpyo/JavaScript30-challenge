@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JS + CSS Clock</title>
+</head>
+<body>
+
+
+    <div class="clock">
+      <div class="clock-face">
+        <div class="hand hour-hand">hour</div>
+        <div class="hand min-hand">min</div>
+        <div class="hand second-hand">second</div>
+      </div>
+    </div>
+
+
+  <style>
+    html {
+      background: #018DED url(https://unsplash.it/1500/1000?image=881&blur=5);
+      background-size: cover;
+      font-family: 'helvetica neue';
+      text-align: center;
+      font-size: 10px;
+    }
+
+    body {
+      margin: 0;
+      font-size: 2rem;
+      display: flex;
+      flex: 1;
+      min-height: 100vh;
+      align-items: center;
+    }
+
+    .clock {
+      width: 30rem;
+      height: 30rem;
+      border: 20px solid white;
+      border-radius: 50%;
+      margin: 50px auto;
+      position: relative;
+      padding: 2rem;
+      box-shadow:
+        0 0 0 4px rgba(0,0,0,0.1),
+        inset 0 0 0 3px #EFEFEF,
+        inset 0 0 10px black,
+        0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .clock-face {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform: translateY(-3px); /* account for the height of the clock hands */
+    }
+
+    .hand {
+      width: 50%;
+      height: 6px;
+      background: black;
+      position: absolute;
+      top: 50%;
+
+      /*
+        요소를 그냥 rotate 하면 요소의 중앙(center) 축을 기준으로 회전한다.
+        일자(ㅡ) 요소의 제일 오른쪽 끝을 축으로 회전하도록 설정한다.
+      */
+      transform-origin: 100%;
+
+      /* 일(ㅡ)자로 박스가 누워있으므로 세로(|)로 세워준다. */
+      transform: rotate(90deg);
+
+      /* 시계침이 tick tock 하는 모양처럼 되도록 transition 을 추가한다. */
+      transition: all .05s;
+      transition-timing-function: cubic-bezier(0.1, 2.7, 0.58, 1);
+    }
+
+    /* 시침, 분침, 초침을 쉽게 구분하도록 임시로 색을 추가한다. */
+    .second-hand {
+      background: red;
+    }
+
+    .min-hand {
+      background: yellow;
+    }
+
+    .hour-hand {
+      background: green;
+    }
+
+  </style>
+
+  <script>
+    <!-- 초침, 분침, 시침 요소를 찾는다. -->
+    const secondHand = document.querySelector('.second-hand');
+    const minHand = document.querySelector('.min-hand');
+    const hourHand = document.querySelector('.hour-hand');
+
+    function setDate() {
+      // 현재 날짜와 시간 정보를 가져온다.
+      const now = new Date();
+
+      // 현재 초를 가져온다.
+      const seconds = now.getSeconds();
+
+      // 시침은 1초마다 1/60칸 움직인다.
+      const secondsDegrees = ((seconds / 60) * 360) + 90;
+      // +90을 추가한 이유는 기존에 transform rotate 로 미리 90도 회전시켰기 때문이다.
+      secondHand.style.transform = `rotate(${secondsDegrees}deg`;
+
+      // 분침도 1분마다 1/60칸 움직인다.
+      const minutes = now.getMinutes();
+      const minutesDegrees = ((minutes / 60) * 360) + 90;
+      minHand.style.transform = `rotate(${minutesDegrees}deg)`
+
+      // 시침은 1시간마다 5/60칸 움직인다.
+      // 총 60칸을 5칸 단위로 나누면 12칸이므로, 시침은 1/12 씩 움직인다.
+      const hours = now.getHours();
+      const hoursDegrees = ((hours / 12) * 360) + 90;
+      hourHand.style.transform = `rotate(${hoursDegrees}deg)`
+    }
+
+    setInterval(setDate, 1000);
+
+    setDate();
+
+  </script>
+</body>
+</html>
